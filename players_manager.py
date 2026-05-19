@@ -24,6 +24,15 @@ class PlayerMaganer:
         self.eloCalc: EloCalc = EloCalc()
 
     def game(self, player1: str, player2: str, result: float) -> Difference:
+        self.players[player1]["total_games"] += 1
+        self.players[player2]["total_games"] += 1
+        if result > 0.5:
+            self.players[player1]["wins"] += 1
+            self.players[player2]["loses"] += 1
+        elif result < 0.5:
+            self.players[player1]["loses"] += 1
+            self.players[player2]["wins"] += 1
+
         r1: float = self.players[player1]["elo"]
         r2: float = self.players[player2]["elo"]
 
