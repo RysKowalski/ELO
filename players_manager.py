@@ -49,7 +49,8 @@ class PlayerMaganer:
         try:
             self._load(path)
         except FileNotFoundError:
-            os.mkdir(path)
+            with open(path, "w") as file:
+                file.write("{}")
             self._load(path)
         except json.JSONDecodeError:
             raise Exception(f"error reading file {path}")

@@ -1,17 +1,13 @@
 from fastapi import FastAPI
-from starlette.responses import FileResponse
+from fastapi.responses import FileResponse
 
 from players_manager import Difference, PlayerMaganer
+from fastapi.staticfiles import StaticFiles
 
 app: FastAPI = FastAPI()
 
 pm: PlayerMaganer = PlayerMaganer()
 pm.load("save.json")
-
-
-@app.get("/")
-def root() -> FileResponse:
-    return FileResponse("index.html")
 
 
 @app.get("/api/get_players")
@@ -24,6 +20,9 @@ def game(player1: str, player2: str, result: float) -> Difference:
     diff: Difference = pm.game(player1, player2, result)
     pm.save("save.json")
     return diff
+
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 
 def run():
