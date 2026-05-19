@@ -13,10 +13,15 @@ async function loadPlayers() {
 
   playersList.innerHTML = "";
 
-  for (const [name, rating] of Object.entries(data)) {
+  for (const [name, info] of Object.entries(data)) {
     const item = document.createElement("li");
 
-    item.textContent = `${name}: ${rating}`;
+    item.textContent =
+      `${name} | ` +
+      `ELO: ${info.elo} | ` +
+      `Games: ${info.total_games} | ` +
+      `Wins: ${info.wins} | ` +
+      `Losses: ${info.loses}`;
 
     playersList.appendChild(item);
   }

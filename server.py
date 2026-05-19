@@ -1,8 +1,7 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
-
-from players_manager import Difference, PlayerMaganer
 from fastapi.staticfiles import StaticFiles
+
+from players_manager import Difference, PlayerInfo, PlayerMaganer
 
 app: FastAPI = FastAPI()
 
@@ -11,7 +10,7 @@ pm.load("save.json")
 
 
 @app.get("/api/get_players")
-def get_players() -> dict[str, float]:
+def get_players() -> dict[str, PlayerInfo]:
     return pm.get_players()
 
 

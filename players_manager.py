@@ -1,5 +1,4 @@
 from collections import defaultdict
-import os
 from typing import TypedDict
 from elo_calc import EloCalc
 import json
@@ -10,19 +9,28 @@ class Difference(TypedDict):
     player2: str
 
 
+class PlayerInfo(TypedDict):
+    elo: float
+    total_games: int
+    wins: int
+    loses: int
+
+
 class PlayerMaganer:
     def __init__(self) -> None:
-        self.players: defaultdict[str, float] = defaultdict(lambda: 500)
+        self.players: defaultdict[str, PlayerInfo] = defaultdict(
+            lambda: {"elo": 500, "total_games": 0, "wins": 0, "loses": 0}
+        )
         self.eloCalc: EloCalc = EloCalc()
 
     def game(self, player1: str, player2: str, result: float) -> Difference:
-        r1: float = self.players[player1]
-        r2: float = self.players[player2]
+        r1: float = self.players[player1]["elo"]
+        r2: float = self.players[player2]["elo"]
 
         newR1, newR2 = self.eloCalc.calculate_elo(r1, r2, result)
 
-        self.players[player1] = newR1
-        self.players[player2] = newR2
+        self.players[player1]["elo"] = newR1
+        self.players[player2]["elo"] = newR2
 
         return self._format_difference(r1 - newR1, r2 - newR2)
 
@@ -59,10 +67,15 @@ class PlayerMaganer:
         with open(path, "r") as file:
             self.players = defaultdict(self.players.default_factory, json.load(file))
 
-    def get_players(self) -> dict[str, float]:
-        ret: dict[str, float] = {}
+    def get_players(self) -> dict[str, PlayerInfo]:
+        ret: dict[str, PlayerInfo] = {}
         for p in self.players:
-            ret[p] = round(self.players[p])
+            ret[p] = {
+                "elo": round(self.players[p]["elo"]),
+                "total_games": self.players[p]["total_games"],
+                "wins": self.players[p]["wins"],
+                "loses": self.players[p]["loses"],
+            }
         return ret
 
 
