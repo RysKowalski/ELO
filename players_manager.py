@@ -3,19 +3,12 @@ from typing import TypedDict
 from elo_calc import EloCalc
 import json
 
-from save_processor import SaveManager
+from save_processor import SaveManager, PlayerInfo
 
 
 class Difference(TypedDict):
     player1: str
     player2: str
-
-
-class PlayerInfo(TypedDict):
-    elo: float
-    total_games: int
-    wins: int
-    loses: int
 
 
 class PlayerMaganer:
