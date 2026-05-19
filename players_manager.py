@@ -3,6 +3,8 @@ from typing import TypedDict
 from elo_calc import EloCalc
 import json
 
+from save_processor import SaveManager
+
 
 class Difference(TypedDict):
     player1: str
@@ -22,6 +24,7 @@ class PlayerMaganer:
             lambda: {"elo": 500, "total_games": 0, "wins": 0, "loses": 0}
         )
         self.eloCalc: EloCalc = EloCalc()
+        self.saveProcessor: SaveManager = SaveManager()
 
     def game(self, player1: str, player2: str, result: float) -> Difference:
         self.players[player1]["total_games"] += 1
@@ -59,8 +62,7 @@ class PlayerMaganer:
         return {"player1": diff1, "player2": diff2}
 
     def save(self, path: str) -> None:
-        with open(path, "w") as file:
-            json.dump(self.players, file)
+        self.saveProcessor.save(self.players, path)
 
     def load(self, path: str) -> None:
         try:
@@ -73,8 +75,10 @@ class PlayerMaganer:
             raise Exception(f"error reading file {path}")
 
     def _load(self, path: str) -> None:
-        with open(path, "r") as file:
-            self.players = defaultdict(self.players.default_factory, json.load(file))
+        self.players = defaultdict(
+            self.players.default_factory,
+            self.saveProcessor.load(path),
+        )
 
     def get_players(self) -> dict[str, PlayerInfo]:
         ret: dict[str, PlayerInfo] = {}
